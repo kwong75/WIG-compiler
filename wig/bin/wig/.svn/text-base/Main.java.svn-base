@@ -1,0 +1,95 @@
+package wig;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PushbackReader;
+import java.io.StringReader;
+
+import wig.lexer.Lexer;
+import wig.lexer.LexerException;
+import wig.node.Start;
+import wig.parser.Parser;
+import wig.parser.ParserException;
+
+public class Main {
+	static Boolean noOutput = false;
+	static Boolean repeatTest = false;
+
+	public static String clearWhiteSpace(String clean) {
+		String returnValue = clean.replaceAll(" ", "");
+		return returnValue;
+	}
+
+	public static void main(String args[]) {
+		if (args.length == 0) {
+			System.out
+					.println("format java wig.Main options \n options: \n -c : Compress result, does not show pretty print\n -t : " +
+							"Test result by parsing and prettyprinting again \n filename : The file to parsescan");
+		}
+
+		for (int i = 0; i < args.length; i++) {
+			try {
+
+				if (args[i].equals("-c")) {
+					noOutput = true;
+				}
+
+				if (args[i].equals("-t")) {
+					repeatTest = true;
+				}
+
+				if (args[i].equals("-c") || args[i].equals("-t")) {
+					continue;
+				}
+
+				if ((new File(args[i])).isDirectory()) {
+					continue;
+				}
+				FileReader fileReader = new FileReader(args[i]);
+
+				Parser p = new Parser(new Lexer(new PushbackReader(fileReader,
+						1024)));
+
+				Start tree = p.parse();
+				System.out.println("Parse successful for " + args[i]);
+				String string = PrettyPrinter.print(tree);
+				/* evaluate */
+				if (!noOutput) {
+					System.out.println("Pretty printing: ");
+					System.out.println(string);
+				}
+				StringReader read = new StringReader(string);
+				Parser p2 = new Parser(
+						new Lexer(new PushbackReader(read, 1024)));
+
+				if (repeatTest) {
+					String string2 = PrettyPrinter.print((Start) p2.parse());
+
+					// White space does not clean
+					if (clearWhiteSpace(string)
+							.equals(clearWhiteSpace(string2))) {
+						System.out
+								.println("The result of parsing and prettyprinting twice is true for "
+										+ args[i]);
+					} else {
+						System.out.println(string2);
+					}
+				}
+			}
+
+			catch (Exception e) {
+				if (e instanceof ParserException || e instanceof LexerException) {
+					System.out.println("Failed to parse " + args[i]);
+					e.printStackTrace();
+				}
+
+				if (e instanceof IOException) {
+					System.err.println("Failed to find file");
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+}
+

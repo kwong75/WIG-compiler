@@ -1,0 +1,49 @@
+.class public MultipleCondition
+
+.super java/lang/Object
+
+.method public <init>()V
+  .limit locals 1
+  .limit stack 1
+  aload_0
+  invokenonvirtual java/lang/Object/<init>()V
+  return
+.end method
+
+.method public static main([Ljava/lang/String;)V
+  .limit locals 4
+  .limit stack 2
+  iconst_1
+  istore_1
+  iconst_2
+  istore_2
+  iload_1
+  iconst_3
+  if_icmpgt true_3
+  iconst_0
+  goto stop_4
+  true_3:
+  iconst_1
+  stop_4:
+  dup
+  ifeq false_2
+  pop
+  iload_2
+  iconst_3
+  if_icmpgt true_5
+  iconst_0
+  goto false_2
+  true_5:
+  iconst_1
+  false_2:
+  ifeq else_0
+  iconst_4
+  istore_3
+  goto stop_1
+  else_0:
+  iconst_5
+  istore_3
+  stop_1:
+  return
+.end method
+

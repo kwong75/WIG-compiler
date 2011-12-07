@@ -1,0 +1,2 @@
+rm *.j
+rm *.class
