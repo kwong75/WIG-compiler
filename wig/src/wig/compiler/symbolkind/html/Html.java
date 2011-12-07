@@ -59,39 +59,27 @@ public class Html extends SymbolKind {
 		return returnValue;
 	}
 
-	public Boolean validPlugs(List<String> identifiers) {
-		for (String identifier : identifiers) {
-			identifier = identifier.replaceAll(" ", "");
-			Boolean result = false;
-			for (final HtmlHole plug : plugs) {
-				String compare = plug.getName().replaceAll("\"", "");
-				compare = compare.replaceAll(" ", "");
-				if (compare.contentEquals(identifier)) {
-					result = true;
-				}
-			}
-			if (result == false) {
-				return false;
+	public Boolean validPlug(String identifier) {
+		String toCompare = identifier.replaceAll(" ", "");
+		for (final HtmlHole plug : plugs) {
+			String compare = plug.getName().replaceAll("\"", "");
+			compare = compare.replaceAll(" ", "");
+			if (compare.contentEquals(toCompare)) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
-	
-	public Boolean validReceives(List<String> identifiers) {
-		for (String identifier : identifiers) {
-			identifier = identifier.replaceAll(" ", "");
-			Boolean result = false;
-			for (final HtmlInput receive : receives) {
-				String compare = receive.getName().replaceAll("\"", "");
-				compare = compare.replaceAll(" ", "");
-				if (compare.contentEquals(identifier)) {
-					result = true;
-				}
-			}
-			if (result == false) {
-				return false;
+
+	public Boolean validReceive(String identifier) {
+		String toCompare = identifier.replaceAll(" ", "");
+		for (final HtmlInput receive : receives) {
+			String compare = receive.getName().replaceAll("\"", "");
+			compare = compare.replaceAll(" ", "");
+			if (compare.contentEquals(toCompare)) {
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 }

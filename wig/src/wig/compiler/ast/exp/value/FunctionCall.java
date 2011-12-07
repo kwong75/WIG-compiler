@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wig.compiler.ast.exp.ExpressionNode;
-import wig.compiler.ast.exp.Value;
+import wig.compiler.ast.exp.BaseExp;
 
-public class FunctionCall extends Value {
+public class FunctionCall extends BaseExp {
 	private String identifier;
 	private List<ExpressionNode> expressionNodes = new ArrayList<ExpressionNode>();
 	
@@ -35,7 +35,7 @@ public class FunctionCall extends Value {
 			returnValue = returnValue.substring(0, returnValue.length());
 		}
 
-		return identifier + "(" + returnValue + ")";
+		return getSign() + identifier + "(" + returnValue + ")";
 	}
 	
 }

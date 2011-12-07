@@ -1,82 +1,72 @@
 package wig.compiler;
 
-import wig.compiler.builder.CompoundStmSymbolTable;
-import wig.compiler.builder.FunctionSymbolTable;
-import wig.compiler.builder.HtmlSymbolTable;
-import wig.compiler.builder.SchemaSymbolTable;
-import wig.compiler.builder.VariableSymbolTable;
+import wig.compiler.ast.ServiceNode;
+import wig.compiler.ast.function.FunctionNode;
+import wig.compiler.ast.html.HtmlNode;
+import wig.compiler.ast.schema.SchemaNode;
+import wig.compiler.ast.session.SessionNode;
+import wig.compiler.ast.variable.VariableNode;
 import wig.compiler.symbol.SymbolTable;
+import wig.compiler.symbol.builder.CompoundStmSymbolTable;
+import wig.compiler.symbol.builder.FunctionSymbolTable;
+import wig.compiler.symbol.builder.HtmlSymbolTable;
+import wig.compiler.symbol.builder.SchemaSymbolTable;
+import wig.compiler.symbol.builder.VariableSymbolTable;
 import wig.compiler.symbolkind.Function;
 import wig.compiler.symbolkind.Schema;
 import wig.compiler.symbolkind.Session;
 import wig.compiler.symbolkind.html.Html;
-import wig.node.ACompoundstm;
-import wig.node.AFunction;
-import wig.node.AHtml;
-import wig.node.ASchema;
-import wig.node.AService;
-import wig.node.ASession;
-import wig.node.AVariable;
-import wig.node.Start;
 
 public class BuildSymbolTable {
 
-	public static SymbolTable run(final Start node, final Boolean display) {
+	public static SymbolTable run(final ServiceNode service,
+			final Boolean display) {
 		final SymbolTable returnValue = new SymbolTable();
-		final AService service = (AService) node.getPService();
+		service.setSymbolTable(returnValue);
 		// Building Html SymbolTable
-		for (Object html : service.getHtml()) {
-			assert html instanceof AHtml : "Grammar as of Monday 24th October, 2011 assumes PHtml can only be AHtml";
-			final Html htmlKind = HtmlSymbolTable
-					.buildHtmlSymbolKind((AHtml) html);
-			returnValue.putSymbol(((AHtml) html).getIdentifier().toString(),
-					htmlKind);
+		for (HtmlNode html : service.getHtmls()) {
+			final Html htmlKind = HtmlSymbolTable.buildHtmlSymbolKind(html);
+			returnValue.putSymbol(html.getIdentifier(), htmlKind);
 			if (display)
 				System.out.println(htmlKind.toString());
 		}
 
-		for (Object schema : service.getSchema()) {
-			assert schema instanceof ASchema : "Grammar as of Monday 24th October, 2011 assumes PSchema can only be ASchema";
+		for (SchemaNode schema : service.getSchemas()) {
 			final Schema schemaKind = SchemaSymbolTable
-					.buildSchemaSymbolKind((ASchema) schema);
-			returnValue.putSymbol(
-					((ASchema) schema).getIdentifier().toString(), schemaKind);
+					.buildSchemaSymbolKind(schema);
+			returnValue.putSymbol(schema.getIdentifier(), schemaKind);
 			if (display)
 				System.out.println(schemaKind.toString());
 		}
 
-		for (Object variable : service.getVariable()) {
-			assert variable instanceof AVariable : "Grammar as of Monday 24th October, 2011 assumes PVariable can only be Avariable";
+		for (VariableNode variable : service.getVariables()) {
 			VariableSymbolTable.buildAndPutVariableSymbolKind(returnValue,
-					(AVariable) variable, display);
+					variable, display);
 
 		}
 
-		// Will have to handle in 2 pass for compoundstm
-		for (Object function : service.getFunction()) {
-			assert function instanceof AFunction : "Grammar as of Monday 24th October, 2011 assumes PFunction can only be AFunction";
+		// Will have to handle in 2 pass for compoundstm.
+		// This will allow function to call all other functions
+		for (FunctionNode function : service.getFunctions()) {
 			final Function functionKind = FunctionSymbolTable
-					.buildFunctionSymbolKind(returnValue, (AFunction) function);
-			returnValue.putSymbol(((AFunction) function).getIdentifier()
-					.toString(), functionKind);
+					.buildFunctionSymbolKind(returnValue, function);
+			returnValue.putSymbol(function.getIdentifier(), functionKind);
 		}
 
-		for (Object function : service.getFunction()) {
-			assert function instanceof AFunction : "Grammar as of Monday 24th October, 2011 assumes PFunction can only be AFunction";
+		for (FunctionNode function : service.getFunctions()) {
 			final SymbolTable functionImpl = new SymbolTable();
-
 			functionImpl.scopeSymbolTable(returnValue);
-			AFunction functionNode = (AFunction) function;
+			function.setSymbolTable(functionImpl);
 			Function functionHead = (Function) returnValue.getSymbol(
-					functionNode.getIdentifier().toString()).getKind();
+					function.getIdentifier()).getKind();
 			if (display) {
 				System.out.print(functionHead.toString());
 				System.out.print("{\n");
 			}
 			FunctionSymbolTable.buildAndPutArgumentSymbols(functionHead,
-					functionImpl, functionNode.getArguments(), display);
-			CompoundStmSymbolTable.buildCompountStmSymbolTable(functionImpl,
-					(ACompoundstm) functionNode.getCompoundstm(), display);
+					functionImpl, function.getArguments(), display);
+			CompoundStmSymbolTable.buildCompoundStmSymbolTable(functionImpl,
+					function.getCompoundStm(), display);
 			if (display) {
 				System.out.print("}\n\n");
 			}
@@ -84,17 +74,17 @@ public class BuildSymbolTable {
 		}
 
 		// Not going to build this in multipass
-		for (Object session : service.getSession()) {
-			final ASession sessionNode = (ASession) session;
+		for (final SessionNode session : service.getSessions()) {
 			final Session sessionKind = new Session();
-			sessionKind.setName(sessionNode.getIdentifier().toString());
+			sessionKind.setName(session.getIdentifier());
 			if (display) {
 				System.out.print(sessionKind.toString() + "{\n");
 			}
+			// Awkward to have SymbolTable, since there should be no symbols in it.
 			final SymbolTable sessionImpl = new SymbolTable();
 			sessionImpl.scopeSymbolTable(returnValue);
-			CompoundStmSymbolTable.buildCompountStmSymbolTable(sessionImpl,
-					(ACompoundstm) sessionNode.getCompoundstm(), display);
+			CompoundStmSymbolTable.buildCompoundStmSymbolTable(sessionImpl,
+					session.getCompoundStm(), display);
 			if (display) {
 				System.out.print("}\n\n");
 			}

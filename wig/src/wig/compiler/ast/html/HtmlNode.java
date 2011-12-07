@@ -3,10 +3,15 @@ package wig.compiler.ast.html;
 import java.util.ArrayList;
 import java.util.List;
 
+import wig.compiler.symbol.SymbolTable;
+
 public class HtmlNode {
 	private String identifier;
 	private List<HtmlBodyNode> nodes = new ArrayList<HtmlBodyNode>();
-
+	
+	//SymbolTable
+	private SymbolTable symbolTable;
+	
 	public String getIdentifier() {
 		return identifier;
 	}
@@ -29,6 +34,14 @@ public class HtmlNode {
 		for (final HtmlBodyNode node : nodes) {
 			returnValue = returnValue + node.toString() + "\n";
 		}
-		return returnValue + "</html>;";
+		return returnValue + "</html>;\n";
+	}
+
+	public SymbolTable getSymbolTable() {
+		return symbolTable;
+	}
+
+	public void setSymbolTable(SymbolTable symbolTable) {
+		this.symbolTable = symbolTable;
 	}
 }

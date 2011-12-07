@@ -13,6 +13,6 @@ public class StringValue extends PrimitiveValue {
 	
 	@Override
 	public String toString() {
-		return value;
+		return getSign() + value;
 	}
 }

@@ -25,8 +25,10 @@ public class Variable extends SymbolKind {
 			return;
 		}
 		if (table.getSymbol(type) != null) {
-			this.type = type;
-			return;
+			if (table.getSymbol(type).getKind() instanceof Schema) {
+				this.type = type;
+				return;	
+			}
 		}
 		throw new RuntimeException("Failed to find type " + type);
 	}

@@ -6,7 +6,9 @@ import java.io.PushbackReader;
 import java.io.StringReader;
 
 import wig.command.Switch;
-import wig.compiler.symbol.SymbolTable;
+import wig.compiler.ast.BuildServiceAst;
+import wig.compiler.ast.ServiceNode;
+import wig.compiler.typecheck.CheckType;
 import wig.lexer.Lexer;
 import wig.lexer.LexerException;
 import wig.node.Start;
@@ -17,7 +19,7 @@ public class SingleFileToCompile {
 	private Switch switches;
 	private File file;
 	private String prettyprint;
-	private SymbolTable symbolTable;
+	private ServiceNode ast;
 
 	public SingleFileToCompile(final Switch switches, final File file) {
 		this.switches = switches;
@@ -28,10 +30,15 @@ public class SingleFileToCompile {
 		try {
 			FileReader fileReader = new FileReader(file);
 			Parser p = new Parser(new Lexer(new PushbackReader(fileReader, 1024)));
-			Start tree = p.parse();
-			System.out.println("Parse successful for " + file.toString());
-
-			prettyprint = PrettyPrinter.print(tree);
+			Start tree;
+			try {
+				 tree = p.parse();
+				System.out.println("Parse successful for " + file.toString());
+			} catch (Exception e) {
+				throw e;
+			}
+			ast = BuildServiceAst.run(tree);
+			prettyprint = ast.toString();
 
 			/* Pretty Print */
 			if (!switches.getNoOutput()) {
@@ -43,9 +50,18 @@ public class SingleFileToCompile {
 				repeatTest();
 			}
 			
-			//TODO: Symbol!!!
 			if (!switches.getNoSymbol()) {
-				symbolTable = BuildSymbolTable.run(tree,true);
+				BuildSymbolTable.run(ast,!switches.getNoDisplay());
+				System.out.println("Symbol Table created");
+				if (!switches.getNoTypeCheck()) {
+					try {
+						CheckType.run(ast);
+						System.out.println("Passed Typed Check");
+					} catch(Exception e) {
+//						System.out.println("Failed Typed Check");
+						throw e;
+					}
+				}
 			}
 			/* Exception handling */
 		} catch (Exception e) {
@@ -82,13 +98,13 @@ public class SingleFileToCompile {
 		Parser p2 = new Parser(new Lexer(new PushbackReader(read, 1024)));
 		String string2;
 		try {
-			string2 = PrettyPrinter.print((Start) p2.parse());
+			string2 = BuildServiceAst.run((Start) p2.parse()).toString();
 		} catch (Exception e) {
 			throw e;
 		}
 
 		// White space does not clean
-		if (clearWhiteSpace(prettyprint).equals(clearWhiteSpace(string2))) {
+		if (prettyprint.equals(string2)) {
 			System.out
 					.println("The result of parsing and prettyprinting twice is true for "
 							+ file.toString());
@@ -97,8 +113,4 @@ public class SingleFileToCompile {
 		}
 	}
 
-	private static String clearWhiteSpace(String clean) {
-		String returnValue = clean.replaceAll(" ", "");
-		return returnValue;
-	}
 }

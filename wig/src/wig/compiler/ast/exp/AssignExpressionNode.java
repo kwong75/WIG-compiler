@@ -1,6 +1,6 @@
 package wig.compiler.ast.exp;
 
-public class AssignExpressionNode {
+public class AssignExpressionNode implements ExpressionNode {
 	private LValueNode lvalue;
 	private ExpressionNode value;
 

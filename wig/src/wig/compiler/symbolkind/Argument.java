@@ -24,7 +24,7 @@ public class Argument extends SymbolKind {
 			this.type = type;
 			return;
 		}
-		if (table.getSymbol(type) != null) {
+		if (table.getSymbol(type) != null && table.getSymbol(type).getKind() instanceof Schema) {
 			this.type = type;
 			return;
 		}

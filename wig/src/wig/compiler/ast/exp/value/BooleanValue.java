@@ -2,7 +2,7 @@ package wig.compiler.ast.exp.value;
 
 public class BooleanValue extends PrimitiveValue {
 	private String value;
-	public enum BOOLEANVALUE {TRUE, FALSE};
+	private enum BOOLEANVALUE {TRUE, FALSE};
 	
 	public void setValue(BOOLEANVALUE value) {
 		switch(value) {
@@ -12,12 +12,21 @@ public class BooleanValue extends PrimitiveValue {
 		}
 	}
 	
+	public BOOLEANVALUE getBOOLEANVALUE(final String value) {
+		if (value.contentEquals("true")) {
+			return BOOLEANVALUE.TRUE;
+		} else if (value.contentEquals("false")) {
+			return BOOLEANVALUE.FALSE;
+		}
+		throw new RuntimeException("No BooleanValue of " + value);
+	}
+	
 	public String getValue() {
 		return value;
 	}
 	
 	@Override
 	public String toString() {
-		return value;
+		return getSign() + value;
 	}
 }

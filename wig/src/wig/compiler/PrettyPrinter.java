@@ -10,6 +10,7 @@ import wig.node.Node;
 /**
  * Pretty Printer for the Wig language
  */
+@Deprecated
 public class PrettyPrinter extends DepthFirstAdapter {
 
 	/* (static) eval function */

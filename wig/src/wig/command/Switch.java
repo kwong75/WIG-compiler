@@ -10,7 +10,9 @@ public class Switch {
 	private Boolean repeatTest = false;
 	private Boolean noSymbol = false;
 	private Boolean suppressError = false;
+	private Boolean noType = false;
 	private Boolean error = false;
+	private Boolean noDisplay = false;
 	private List<String> errMsg = new ArrayList<String>();
 
 	public Switch(List<ConsoleCommand> commands) {
@@ -26,6 +28,10 @@ public class Switch {
 				noSymbol = true;
 			} else if (command == ConsoleCommand.SUPPRESSERROR) {
 				suppressError = true;
+			} else if (command == ConsoleCommand.NOTYPE) {
+				noType = true;
+			} else if (command == ConsoleCommand.NODISPLAY) {
+				noDisplay = true;
 			}
 			else {
 				error = true;
@@ -57,6 +63,14 @@ public class Switch {
 
 	public List<String> getErrMsg() {
 		return errMsg;
+	}
+
+	public boolean getNoTypeCheck() {
+		return noType;
+	}
+
+	public Boolean getNoDisplay() {
+		return noDisplay;
 	}
 
 }

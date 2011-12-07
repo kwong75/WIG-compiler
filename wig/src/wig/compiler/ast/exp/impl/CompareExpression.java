@@ -24,7 +24,7 @@ public class CompareExpression extends LRExpressionNode {
 			return SIGN.LT;
 		} else if (sign.contentEquals("<=")) {
 			return SIGN.LE;
-		} else if (sign.contentEquals("GE")) {
+		} else if (sign.contentEquals(">=")) {
 			return SIGN.GE;
 		} 
 		throw new RuntimeException("CompareExpression sign " + sign + " not found");

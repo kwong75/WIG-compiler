@@ -9,7 +9,7 @@ import wig.util.SimpleType;
 public class Function extends SymbolKind {
 	private String name;
 	private String type;
-	private List<String> argumentsType = new ArrayList<String>();
+	private List<Argument> argumentsType = new ArrayList<Argument>();
 
 	public String getName() {
 		return name;
@@ -35,20 +35,12 @@ public class Function extends SymbolKind {
 		throw new RuntimeException("Failed to find type " + type);
 	}
 	
-	public List<String> getArgumentsType() {
+	public List<Argument> getArgumentsType() {
 		return argumentsType;
 	}
 	
-	public void addArgumentType(final SymbolTable table, final String type) {
-		if (SimpleType.isSimpleType(type)) {
+	public void addArgumentType(final SymbolTable table, final Argument type) {
 			argumentsType.add(type);
-			return;
-		}
-		if (table.getSymbol(type) != null) {
-			argumentsType.add(type);
-			return;
-		}
-		throw new RuntimeException("Failed to find type " + type);
 	}
 	
 	public String toString() {

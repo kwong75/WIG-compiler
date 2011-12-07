@@ -3,7 +3,7 @@ package wig.compiler.ast.exp;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LValueNode implements ExpressionNode {
+public class LValueNode extends BaseExp {
 	private List<String> identifiers = new ArrayList<String>();
 	
 	public void addIdentifier(final String id) {

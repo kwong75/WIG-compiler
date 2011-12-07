@@ -4,7 +4,7 @@ public class IntegerValue extends PrimitiveValue {
 	private int value;
 
 	public void setValue(final String value) {
-		this.value = Integer.getInteger(value);
+		this.value = Integer.valueOf(value);
 	}
 
 	public int getValue() {
@@ -13,6 +13,6 @@ public class IntegerValue extends PrimitiveValue {
 	
 	@Override
 	public String toString() {
-		return String.valueOf(value);
+		return getSign() + String.valueOf(value);
 	}
 }

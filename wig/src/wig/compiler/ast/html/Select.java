@@ -1,14 +1,15 @@
 package wig.compiler.ast.html;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Select implements HtmlBodyNode {
 	private String inputType;
 	private enum TYPE {RADIO, TEXT};
-	private List<Attribute> attributes;
-	private List<HtmlBodyNode> bodynodes;
+	private List<Attribute> attributes = new ArrayList<Attribute>();
+	private List<HtmlBodyNode> bodynodes = new ArrayList<HtmlBodyNode>();
 	
-	public void setType(TYPE type) {
+	public void setInputType(TYPE type) {
 		switch (type) {
 			case RADIO: inputType = "radio"; break;
 			case TEXT: inputType = "text"; break;
@@ -45,6 +46,9 @@ public class Select implements HtmlBodyNode {
 	}
 	
 	public void addAttribute(final Attribute node) {
+		if (node.getLeft().contentEquals("type")) {
+			setInputType(getType(node.getRight()));
+		} else
 		attributes.add(node);
 	}
 

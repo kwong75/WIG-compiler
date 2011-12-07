@@ -3,9 +3,9 @@ package wig.compiler.ast.exp.value;
 import java.util.ArrayList;
 import java.util.List;
 
-import wig.compiler.ast.exp.Value;
+import wig.compiler.ast.exp.BaseExp;
 
-public class TupleValue extends Value {
+public class TupleValue extends BaseExp {
 	
 	private List<FieldValueNode> fieldValues = new ArrayList<FieldValueNode>();
 	
@@ -27,7 +27,7 @@ public class TupleValue extends Value {
 			returnValue = returnValue.substring(0, fieldValues.size() - 1);
 		}
 		
-		return "tuple { " + returnValue + "}";
+		return getSign() + "tuple { " + returnValue + "}";
 	}
 	
 }

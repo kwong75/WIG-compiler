@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import wig.compiler.ast.variable.VariableNode;
+import wig.compiler.symbol.SymbolTable;
 
 public class CompoundStm implements StmNode {
 	private List<VariableNode> variables = new ArrayList<VariableNode>();
 	private List<StmNode> stms = new ArrayList<StmNode>();
 
+	//SymbolTable
+	private SymbolTable symbolTable;
+	
 	public void addVariable(VariableNode variable) {
 		variables.add(variable);
 	}
@@ -36,6 +40,14 @@ public class CompoundStm implements StmNode {
 		}
 		returnValue = returnValue + "}\n";
 		return returnValue;
+	}
+
+	public SymbolTable getSymbolTable() {
+		return symbolTable;
+	}
+
+	public void setSymbolTable(SymbolTable symbolTable) {
+		this.symbolTable = symbolTable;
 	}
 	
 }
